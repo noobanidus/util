@@ -16,10 +16,6 @@ buildscript {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.0.165-run-configs-rework', changing: true
     }
 }
-plugins {
-    id 'com.github.johnrengelman.shadow' version '5.2.0'
-}
-
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'maven-publish'
 apply plugin: 'eclipse'
@@ -108,35 +104,13 @@ repositories {
     maven { // JEI
         url "http://dvs1.progwml6.com/files/maven"
     }
+    flatDir {
+        dirs "libs"
+    }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    compile fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
-
-    def registrate = "com.tterrag.registrate:Registrate:MC${minecraft_version}-${registrate_version}"
-    implementation fg.deobf(registrate)
-    shade registrate
-
-    def noobutil = "noobanidus.libs:noobutil:${minecraft_version}-${noobutil_version}"
-    implementation fg.deobf(noobutil)
-    shade noobutil
+    compile fg.deobf("xiroc.dungeoncrawl:DungeonCrawl:1.14.4-1.6.0")
 }
-
-shadowJar {
-    configurations = [project.configurations.shade]
-    relocate 'com.tterrag.registrate', 'noobanidus.mods.repack_util.registrate'
-    relocate 'noobanidus.libs.noobutil', 'noobanids.libs.repack_util.noobutil'
-    classifier ''
-}
-
-jar.classifier = 'nodep'
-
-reobf {
-    shadowJar {}
-}
-
-build.dependsOn reobfShadowJar
-
-

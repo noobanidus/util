@@ -1,17 +1,15 @@
 package noobanidus.libs.util.init;
 
-import com.tterrag.registrate.util.RegistryEntry;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import noobanidus.libs.util.Util;
 import noobanidus.libs.util.recipes.EnchantmentRecipe;
 
-import static noobanidus.libs.util.Util.REGISTRATE;
-
-
 public class ModRecipes {
+  public static DeferredRegister<IRecipeSerializer<?>> recipeRegistry = new DeferredRegister<>(ForgeRegistries.RECIPE_SERIALIZERS, Util.MODID);
 
-  public static RegistryEntry<SpecialRecipeSerializer<EnchantmentRecipe>> ENCHANTMENT_RECIPE = REGISTRATE.recipeSerializer("enchantment_recipe", () -> new SpecialRecipeSerializer<>(EnchantmentRecipe::new)).register();
-
-  public static void load() {
-
-  }
+  public static RegistryObject<SpecialRecipeSerializer<EnchantmentRecipe>> ENCHANTMENT_RECIPE = recipeRegistry.register("enchantment_recipe", () -> new SpecialRecipeSerializer<>(EnchantmentRecipe::new));
 }

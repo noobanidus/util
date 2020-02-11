@@ -6,6 +6,7 @@ import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.SpecialRecipe;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -22,7 +23,7 @@ public class EnchantmentRecipe extends SpecialRecipe {
       ItemStack stack = inv.getStackInSlot(i);
       if (stack.getItem() == Items.BOOK || stack.getItem() == Items.ENCHANTED_BOOK) {
         CompoundNBT tag = stack.getOrCreateTag();
-        return tag.contains("Enchantments", Constants.NBT.TAG_COMPOUND);
+        return tag.contains("Enchantments", Constants.NBT.TAG_LIST);
       }
     }
 
@@ -33,10 +34,11 @@ public class EnchantmentRecipe extends SpecialRecipe {
   public ItemStack getCraftingResult(CraftingInventory inv) {
     for (int i = 0; i < inv.getSizeInventory(); i++) {
       ItemStack stack = inv.getStackInSlot(i).copy();
+      stack.setCount(1);
       if (stack.getItem() == Items.BOOK || stack.getItem() == Items.ENCHANTED_BOOK) {
         CompoundNBT tag = stack.getOrCreateTag();
-        if (tag.contains("Enchantments", Constants.NBT.TAG_COMPOUND)) {
-          CompoundNBT enchants = tag.getCompound("Enchantments");
+        if (tag.contains("Enchantments", Constants.NBT.TAG_LIST)) {
+          ListNBT enchants = tag.getList("Enchantments", Constants.NBT.TAG_COMPOUND);
           tag.remove("Enchantments");
           tag.put("StoredEnchantments", enchants);
         }
