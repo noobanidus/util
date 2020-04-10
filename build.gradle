@@ -111,6 +111,4 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-
-    compile fg.deobf("xiroc.dungeoncrawl:DungeonCrawl:1.14.4-1.6.0")
 }

@@ -18,6 +18,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import noobanidus.libs.util.events.PotionHandler;
@@ -48,26 +49,15 @@ public class Util {
   }
 
   private static final Set<ResourceLocation> ENTITIES_TO_REMOVE = Sets.newHashSet(new ResourceLocation("quark", "stoneling"), new ResourceLocation("quark", "frog"), new ResourceLocation("quark", "foxhound"));
-  private static final ResourceLocation PIKE = new ResourceLocation("upgradeaquatic", "pike");
 
   public void loadComplete (FMLLoadCompleteEvent event) {
     for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
       for (EntityClassification classification : EntityClassification.values()) {
         List<Biome.SpawnListEntry> spawns = biome.getSpawns(classification);
         spawns.removeIf(o -> ENTITIES_TO_REMOVE.contains(o.entityType.getRegistryName()));
-        spawns.forEach(entry -> {
-          if (Objects.requireNonNull(entry.entityType.getRegistryName()).equals(PIKE)) {
-            entry.itemWeight = 1;
-            entry.maxGroupCount = 1;
-          }
-        });
       }
     }
   }
-
-  private static EntityType<?> pike = null;
-  private static boolean nopike = false;
-  private static Set<Class<? extends Goal>> classesToRemove;
 
   public void joinWorld (EntityJoinWorldEvent event) {
     Entity entity = event.getEntity();
@@ -75,26 +65,9 @@ public class Util {
       ZombieEntity zombie = (ZombieEntity) entity;
       zombie.goalSelector.goals.removeIf(o -> o.getGoal().getClass().equals(ZombieEntity.AttackTurtleEggGoal.class));
     }
-    if (nopike) {
-      return;
-    }
-    if (pike == null) {
-      pike = ForgeRegistries.ENTITIES.getValue(PIKE);
-    }
-    if (pike == null) {
-      nopike = true;
-    }
-    if (entity.getType().equals(pike)) {
-      WaterMobEntity mob = (WaterMobEntity) entity;
-      if (classesToRemove == null) {
-        classesToRemove = new HashSet<>();
-        mob.targetSelector.goals.forEach(o -> {
-          if (!(o.getGoal() instanceof HurtByTargetGoal)) {
-            classesToRemove.add(o.getGoal().getClass());
-          }
-        });
-      }
-      mob.targetSelector.goals.removeIf(o -> classesToRemove.contains(o.getGoal().getClass()));
-    }
+  }
+
+  public void serverStarting (FMLServerStartingEvent event) {
+
   }
 }
