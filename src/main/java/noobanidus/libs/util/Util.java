@@ -21,6 +21,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
+import noobanidus.libs.util.commands.CommandItems;
 import noobanidus.libs.util.events.PotionHandler;
 import noobanidus.libs.util.init.ModRecipes;
 import noobanidus.libs.util.setup.ClientSetup;
@@ -46,6 +47,7 @@ public class Util {
     modBus.addListener(this::loadComplete);
     ModRecipes.recipeRegistry.register(modBus);
     MinecraftForge.EVENT_BUS.addListener(PotionHandler::onPotionAdded);
+    MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
   }
 
   private static final Set<ResourceLocation> ENTITIES_TO_REMOVE = Sets.newHashSet(new ResourceLocation("quark", "stoneling"), new ResourceLocation("quark", "frog"), new ResourceLocation("quark", "foxhound"));
@@ -67,7 +69,9 @@ public class Util {
     }
   }
 
-  public void serverStarting (FMLServerStartingEvent event) {
+  private CommandItems itemsCommand;
 
+  public void serverStarting (FMLServerStartingEvent event) {
+    CommandItems itemsCommand = new CommandItems(event.getCommandDispatcher()).register();
   }
 }
