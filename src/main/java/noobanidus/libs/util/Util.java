@@ -16,12 +16,18 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.ForgeRegistries;
+import noobanidus.libs.util.commands.CommandEntities;
+import noobanidus.libs.util.commands.CommandItemKill;
 import noobanidus.libs.util.commands.CommandItems;
+import noobanidus.libs.util.config.ConfigManager;
 import noobanidus.libs.util.events.PotionHandler;
 import noobanidus.libs.util.init.ModRecipes;
 import noobanidus.libs.util.setup.ClientSetup;
@@ -38,7 +44,11 @@ public class Util {
 
   public Util() {
     IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+    ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigManager.COMMON_CONFIG);
+    ConfigManager.loadConfig(ConfigManager.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MODID + "-common.toml"));
     modBus.addListener(CommonSetup::init);
+    modBus.addListener(ConfigManager::onLoading);
+    modBus.addListener(ConfigManager::onReload);
 
     DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
       modBus.addListener(ClientSetup::init);
@@ -70,8 +80,12 @@ public class Util {
   }
 
   private CommandItems itemsCommand;
+  private CommandEntities entitiesCommand;
+  private CommandItemKill itemKillCommand;
 
   public void serverStarting (FMLServerStartingEvent event) {
-    CommandItems itemsCommand = new CommandItems(event.getCommandDispatcher()).register();
+    itemsCommand = new CommandItems(event.getCommandDispatcher()).register();
+    entitiesCommand = new CommandEntities(event.getCommandDispatcher()).register();
+    itemKillCommand = new CommandItemKill(event.getCommandDispatcher()).register();
   }
 }
