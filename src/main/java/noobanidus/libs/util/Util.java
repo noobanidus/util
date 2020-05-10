@@ -24,6 +24,7 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.ForgeRegistries;
+import noobanidus.libs.util.commands.CommandConflicts;
 import noobanidus.libs.util.commands.CommandEntities;
 import noobanidus.libs.util.commands.CommandItemKill;
 import noobanidus.libs.util.commands.CommandItems;
@@ -82,10 +83,12 @@ public class Util {
   private CommandItems itemsCommand;
   private CommandEntities entitiesCommand;
   private CommandItemKill itemKillCommand;
+  private CommandConflicts conflictsCommand;
 
   public void serverStarting (FMLServerStartingEvent event) {
     itemsCommand = new CommandItems(event.getCommandDispatcher()).register();
     entitiesCommand = new CommandEntities(event.getCommandDispatcher()).register();
     itemKillCommand = new CommandItemKill(event.getCommandDispatcher()).register();
+    conflictsCommand = new CommandConflicts(event.getCommandDispatcher()).register();
   }
 }
