@@ -7,6 +7,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.BreakBlockGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
+import net.minecraft.entity.monster.PatrollerEntity;
 import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.util.ResourceLocation;
@@ -72,11 +73,19 @@ public class Util {
     }
   }
 
+  public static Set<EntityType<?>> patrollers = Sets.newHashSet(EntityType.PILLAGER, EntityType.EVOKER, EntityType.ILLUSIONER, EntityType.RAVAGER, EntityType.VINDICATOR, EntityType.WITCH);
+
   public void joinWorld (EntityJoinWorldEvent event) {
     Entity entity = event.getEntity();
-    if (entity.getType().equals(EntityType.ZOMBIE)) {
+    EntityType<?> type = entity.getType();
+    if (type.equals(EntityType.ZOMBIE)) {
       ZombieEntity zombie = (ZombieEntity) entity;
       zombie.goalSelector.goals.removeIf(o -> o.getGoal().getClass().equals(ZombieEntity.AttackTurtleEggGoal.class));
+    }
+    if (patrollers.contains(type)) {
+      PatrollerEntity patroller = (PatrollerEntity) entity; // Safe cast
+      patroller.goalSelector.goals.removeIf(o -> o.getGoal().getClass().equals(PatrollerEntity.PatrolGoal.class));
+
     }
   }
 
