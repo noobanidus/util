@@ -37,7 +37,7 @@ public class ConfigManager {
     spec.setConfig(configData);
   }
 
-  public static void onReload(ModConfig.ConfigReloading event) {
+  public static void onReload(ModConfig.Reloading event) {
     reset(event.getConfig());
   }
 

@@ -1,20 +1,11 @@
 package noobanidus.libs.util;
 
 import com.google.common.collect.Sets;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ai.goal.BreakBlockGoal;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.ai.goal.HurtByTargetGoal;
-import net.minecraft.entity.monster.PatrollerEntity;
-import net.minecraft.entity.monster.ZombieEntity;
-import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -25,19 +16,17 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.ForgeRegistries;
-import noobanidus.libs.util.commands.CommandConflicts;
 import noobanidus.libs.util.commands.CommandEntities;
 import noobanidus.libs.util.commands.CommandItemKill;
 import noobanidus.libs.util.commands.CommandItems;
 import noobanidus.libs.util.config.ConfigManager;
-import noobanidus.libs.util.events.PotionHandler;
-import noobanidus.libs.util.init.ModRecipes;
 import noobanidus.libs.util.setup.ClientSetup;
 import noobanidus.libs.util.setup.CommonSetup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
 @Mod("util")
 public class Util {
@@ -57,14 +46,12 @@ public class Util {
     });
 
     modBus.addListener(this::loadComplete);
-    ModRecipes.recipeRegistry.register(modBus);
-    MinecraftForge.EVENT_BUS.addListener(PotionHandler::onPotionAdded);
     MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
   }
 
-  private static final Set<ResourceLocation> ENTITIES_TO_REMOVE = Sets.newHashSet(new ResourceLocation("quark", "stoneling"), new ResourceLocation("quark", "frog"), new ResourceLocation("quark", "foxhound"));
+  private static final Set<ResourceLocation> ENTITIES_TO_REMOVE = Sets.newHashSet(new ResourceLocation("upgrade_aquatic", "pike"));
 
-  public void loadComplete (FMLLoadCompleteEvent event) {
+  public void loadComplete(FMLLoadCompleteEvent event) {
     for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
       for (EntityClassification classification : EntityClassification.values()) {
         List<Biome.SpawnListEntry> spawns = biome.getSpawns(classification);
@@ -73,31 +60,13 @@ public class Util {
     }
   }
 
-  public static Set<EntityType<?>> patrollers = Sets.newHashSet(EntityType.PILLAGER, EntityType.EVOKER, EntityType.ILLUSIONER, EntityType.RAVAGER, EntityType.VINDICATOR, EntityType.WITCH);
-
-  public void joinWorld (EntityJoinWorldEvent event) {
-    Entity entity = event.getEntity();
-    EntityType<?> type = entity.getType();
-    if (type.equals(EntityType.ZOMBIE)) {
-      ZombieEntity zombie = (ZombieEntity) entity;
-      zombie.goalSelector.goals.removeIf(o -> o.getGoal().getClass().equals(ZombieEntity.AttackTurtleEggGoal.class));
-    }
-    if (patrollers.contains(type)) {
-      PatrollerEntity patroller = (PatrollerEntity) entity; // Safe cast
-      patroller.goalSelector.goals.removeIf(o -> o.getGoal().getClass().equals(PatrollerEntity.PatrolGoal.class));
-
-    }
-  }
-
   private CommandItems itemsCommand;
   private CommandEntities entitiesCommand;
   private CommandItemKill itemKillCommand;
-  private CommandConflicts conflictsCommand;
 
-  public void serverStarting (FMLServerStartingEvent event) {
+  public void serverStarting(FMLServerStartingEvent event) {
     itemsCommand = new CommandItems(event.getCommandDispatcher()).register();
     entitiesCommand = new CommandEntities(event.getCommandDispatcher()).register();
     itemKillCommand = new CommandItemKill(event.getCommandDispatcher()).register();
-    conflictsCommand = new CommandConflicts(event.getCommandDispatcher()).register();
   }
 }
