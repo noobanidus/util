@@ -1,11 +1,10 @@
 buildscript {
     repositories {
-        mavenLocal()
-        maven { url = 'http://files.minecraftforge.net/maven' }
-        jcenter()
         mavenCentral()
+        mavenLocal()
         maven {
-            url 'https://dogforce-games.com/maven'
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
         }
         maven {
             name = "sonatype"
@@ -13,19 +12,26 @@ buildscript {
         }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.0.+', changing: true
     }
 }
+plugins {
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'maven-publish'
 apply plugin: 'eclipse'
 
 version = "${minecraft_version}-${mod_version}"
-group = "noobanidus.mods"
-archivesBaseName = "util"
+if (System.getenv('BUILD_NUMBER') != null) {
+    version = "${minecraft_version}-${mod_version}-" + System.getenv('BUILD_NUMBER')
+}
+group = 'epicsquid.util' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = 'util'
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+
 
 minecraft {
     mappings channel: 'snapshot', version: "${mcp_mappings}"
@@ -34,12 +40,14 @@ minecraft {
 
     runs {
         client {
-            taskName 'runClient'
-
             workingDirectory project.file('run')
 
-            //property 'forge.logging.markers', 'CORE,REGISTRIES'
+            // Recommended logging data for a userdev environment
+            //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+            property 'mixin.env.disableRefMap', 'true'
 
             mods {
                 util {
@@ -49,12 +57,14 @@ minecraft {
         }
 
         server {
-            taskName 'runServer'
-
             workingDirectory project.file('run')
 
-            //property 'forge.logging.markers', 'CORE,REGISTRIES'
+            // Recommended logging data for a userdev environment
+            //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+            property 'mixin.env.disableRefMap', 'true'
 
             mods {
                 util {
@@ -64,53 +74,103 @@ minecraft {
         }
 
         data {
-            taskName 'runData'
-
             workingDirectory project.file('run')
 
             environment 'target', 'fmluserdevdata'
 
-            //property 'forge.logging.markers', 'CORE,REGISTRIES'
+            // Recommended logging data for a userdev environment
+            //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+            property 'mixin.env.disableRefMap', 'true'
+
+            args '--mod', 'util', '--all', '--output', file('src/generated/resources/'), '--existing', sourceSets.main.resources.srcDirs[0]
 
             mods {
                 util {
                     source sourceSets.main
                 }
             }
-
-            args '--mod', 'util', '--all', '--output', '"' + rootProject.file('src/generated/resources/') + '"',
-                    '--existing', '"' + rootProject.file('src/main/resources') + '"'//, '--existing', '"' + rootProject.file('src/generated/resources') + '"'
-
         }
+    }
+}
+
+repositories {
+    maven {
+        url 'https://maven.mcmoddev.com'
+    }
+    maven {
+        name = "Jared"
+        url = "https://maven.blamejared.com"
+    }
+    maven {
+        url "http://maven.tterrag.com"
+    }
+    maven {
+        // location of the maven that hosts JEI files
+        name = "Progwml6 maven"
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
+        name = "JER"
+        url = "https://dl.bintray.com/way2muchnoise/dev"
     }
 }
 
 configurations {
     shade
 }
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    compile fg.deobf("mezz.jei:jei-${jei_version}")
+
+    def registrate = "com.tterrag.registrate:Registrate:${registrate_version}"
+    implementation fg.deobf(registrate)
+    shade registrate
+
+    def noobutil = "noobanidus.libs:noobutil:${minecraft_version}-${noobutil_version}"
+    implementation fg.deobf(noobutil)
+    shade noobutil
+}
 
 sourceSets.main.resources {
     srcDir 'src/generated/resources'
 }
 
-repositories {
-    maven {
-        url "https://maven.blamejared.com"
-    }
-    maven {
-        url "http://maven.tterrag.com/"
-    }
-    maven { // JEI
-        url "https://dvs1.progwml6.com/files/maven"
-    }
-    flatDir {
-        dirs "libs"
+jar {
+    manifest {
+        attributes([
+                "Specification-Title"     : "util",
+                "Specification-Vendor"    : "Noobanidus",
+                "Specification-Version"   : "1", // We are version 1 of ourselves
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : "${version}",
+                "Implementation-Vendor"   : "Noobanidus",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
     }
 }
 
-dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-
-    compile fg.deobf("mezz.jei:jei-${jei_version}")
+shadowJar {
+    configurations = [project.configurations.shade]
+    relocate 'com.tterrag.registrate', 'noobanidus.libs.repack_util.registrate'
+    relocate 'noobanidus.libs.noobutil', 'noobanidus.libs.repack_util.noobutil'
+    classifier ''
 }
+
+jar.classifier = 'nodep'
+
+reobf {
+    shadowJar {}
+}
+
+build.dependsOn reobfShadowJar
+
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'deobf'
+}
+
+build.dependsOn deobfJar

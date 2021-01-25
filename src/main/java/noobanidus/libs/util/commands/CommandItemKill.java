@@ -4,22 +4,18 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.*;
-import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.util.text.event.HoverEvent;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.DimensionManager;
 import noobanidus.libs.util.config.ConfigManager;
 
-import java.util.*;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class CommandItemKill {
   private final CommandDispatcher<CommandSource> dispatcher;
@@ -41,8 +37,8 @@ public class CommandItemKill {
     builder.executes(c -> {
       Set<Item> blacklist = ConfigManager.getItemBlacklist();
       MinecraftServer server = c.getSource().getServer();
-      for (DimensionType dim : DimensionType.getAll()) {
-        ServerWorld world = DimensionManager.getWorld(server, dim, false, false);
+      for (RegistryKey<World> dim : server.func_240770_D_()) {
+        ServerWorld world = server.getWorld(dim);
         if (world != null) {
           AtomicInteger count = new AtomicInteger(0);
           world.getEntities().forEach(e -> {
@@ -51,7 +47,7 @@ public class CommandItemKill {
               ItemStack stack = i.getItem();
               Item item = stack.getItem();
               if (blacklist.contains(item)) {
-                c.getSource().sendFeedback(new StringTextComponent("Remove item entity " + ((ItemEntity) e).getItem() + " at " + format(e.posX) + ", " + format(e.posY) + ", " + format(e.posX)), false);
+                c.getSource().sendFeedback(new StringTextComponent("Remove item entity " + ((ItemEntity) e).getItem() + " at " + format(e.getPosX()) + ", " + format(e.getPosY()) + ", " + format(e.getPosZ())), false);
                 e.remove();
                 count.getAndIncrement();
               }

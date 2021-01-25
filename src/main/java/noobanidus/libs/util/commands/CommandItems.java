@@ -6,15 +6,12 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentUtils;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.DimensionManager;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,10 +35,10 @@ public class CommandItems {
   public LiteralArgumentBuilder<CommandSource> builder(LiteralArgumentBuilder<CommandSource> builder) {
     builder.executes(c -> {
       MinecraftServer server = c.getSource().getServer();
-      List<DimensionType> unloaded = new ArrayList<>();
-      Map<DimensionType, List<ItemEntity>> itemStorage = new HashMap<>();
-      for (DimensionType dim : DimensionType.getAll()) {
-        ServerWorld world = DimensionManager.getWorld(server, dim, false, false);
+      List<RegistryKey<World>> unloaded = new ArrayList<>();
+      Map<RegistryKey<World>, List<ItemEntity>> itemStorage = new HashMap<>();
+      for (RegistryKey<World> dim : server.func_240770_D_()) {
+        ServerWorld world = server.getWorld(dim);
         if (world == null) {
           unloaded.add(dim);
         } else {
@@ -54,18 +51,18 @@ public class CommandItems {
           itemList.sort(Comparator.comparingDouble(o -> o.getDistanceSq(0, 0, 0)));
         }
       }
-      c.getSource().sendFeedback(new StringTextComponent("Unloaded dimensions that were not considered: " + unloaded.stream().map(DimensionType::toString).collect(Collectors.joining(","))), true);
-      for (Map.Entry<DimensionType, List<ItemEntity>> v : itemStorage.entrySet()) {
+      c.getSource().sendFeedback(new StringTextComponent("Unloaded dimensions that were not considered: " + unloaded.stream().map(RegistryKey<World>::toString).collect(Collectors.joining(","))), true);
+      for (Map.Entry<RegistryKey<World>, List<ItemEntity>> v : itemStorage.entrySet()) {
         if (v.getValue().isEmpty()) {
           c.getSource().sendFeedback(new StringTextComponent("Dimension " + v.getKey() + " contains no ItemEntities."), true);
         }
       }
-      for (Map.Entry<DimensionType, List<ItemEntity>> v : itemStorage.entrySet()) {
+      for (Map.Entry<RegistryKey<World>, List<ItemEntity>> v : itemStorage.entrySet()) {
         if (!v.getValue().isEmpty()) {
           c.getSource().sendFeedback(new StringTextComponent("====== Dimension " + v.getKey() + " ====="), true);
           int i = 0;
           for (ItemEntity item : v.getValue()) {
-            c.getSource().sendFeedback(new StringTextComponent("#" + i + " " + item.getItem().toString() + " at ").appendSibling(TextComponentUtils.wrapInSquareBrackets(new StringTextComponent(format(item.posX) + ", " + format(item.posZ))).setStyle(new Style().setColor(TextFormatting.GREEN).setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tp @s " + item.posX + " " + item.posY + " " + item.posZ)).setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Teleport to location"))))), true);
+            c.getSource().sendFeedback(new StringTextComponent("#" + i + " " + item.getItem().toString() + " at ").append(TextComponentUtils.wrapWithSquareBrackets(new StringTextComponent(format(item.getPosX()) + ", " + format(item.getPosZ()))).setStyle(Style.EMPTY.setColor(Color.fromTextFormatting(TextFormatting.GREEN)).setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tp @s " + item.getPosX() + " " + item.getPosY() + " " + item.getPosZ())).setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Teleport to location"))))), true);
             i++;
           }
         }

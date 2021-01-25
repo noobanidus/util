@@ -2,10 +2,13 @@ package noobanidus.libs.util;
 
 import com.google.common.collect.Sets;
 import net.minecraft.entity.EntityClassification;
+import net.minecraft.loot.LootPool;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -20,6 +23,7 @@ import noobanidus.libs.util.commands.CommandEntities;
 import noobanidus.libs.util.commands.CommandItemKill;
 import noobanidus.libs.util.commands.CommandItems;
 import noobanidus.libs.util.config.ConfigManager;
+import noobanidus.libs.util.setup.ClientInit;
 import noobanidus.libs.util.setup.ClientSetup;
 import noobanidus.libs.util.setup.CommonSetup;
 import org.apache.logging.log4j.LogManager;
@@ -41,22 +45,17 @@ public class Util {
     modBus.addListener(ConfigManager::onLoading);
     modBus.addListener(ConfigManager::onReload);
 
-    DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
-      modBus.addListener(ClientSetup::init);
-    });
+    DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientInit::init);
 
-    modBus.addListener(this::loadComplete);
     MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
+    MinecraftForge.EVENT_BUS.addListener(this::biomeLoad);
   }
 
   private static final Set<ResourceLocation> ENTITIES_TO_REMOVE = Sets.newHashSet(new ResourceLocation("upgrade_aquatic", "pike"));
 
-  public void loadComplete(FMLLoadCompleteEvent event) {
-    for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
-      for (EntityClassification classification : EntityClassification.values()) {
-        List<Biome.SpawnListEntry> spawns = biome.getSpawns(classification);
-        spawns.removeIf(o -> ENTITIES_TO_REMOVE.contains(o.entityType.getRegistryName()));
-      }
+  public void biomeLoad (BiomeLoadingEvent event) {
+    for (EntityClassification classification : EntityClassification.values()) {
+      event.getSpawns().getSpawner(classification).removeIf(o -> ENTITIES_TO_REMOVE.contains(o.type.getRegistryName()));
     }
   }
 
@@ -64,9 +63,9 @@ public class Util {
   private CommandEntities entitiesCommand;
   private CommandItemKill itemKillCommand;
 
-  public void serverStarting(FMLServerStartingEvent event) {
-    itemsCommand = new CommandItems(event.getCommandDispatcher()).register();
-    entitiesCommand = new CommandEntities(event.getCommandDispatcher()).register();
-    itemKillCommand = new CommandItemKill(event.getCommandDispatcher()).register();
+  public void serverStarting(RegisterCommandsEvent event) {
+    itemsCommand = new CommandItems(event.getDispatcher()).register();
+    entitiesCommand = new CommandEntities(event.getDispatcher()).register();
+    itemKillCommand = new CommandItemKill(event.getDispatcher()).register();
   }
 }
