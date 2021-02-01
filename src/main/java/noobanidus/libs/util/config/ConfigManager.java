@@ -22,13 +22,35 @@ public class ConfigManager {
 
   public static ForgeConfigSpec COMMON_CONFIG;
   public static ForgeConfigSpec.ConfigValue<List<? extends String>> ITEM_BLACKLIST;
+  public static ForgeConfigSpec.BooleanValue UNICORN;
+  public static ForgeConfigSpec.IntValue UNICORN_CHANCE;
 
   static {
     COMMON_BUILDER.push("Item Blacklist");
 
     ITEM_BLACKLIST = COMMON_BUILDER.comment("List of items to blacklist for deletion in the form of modname:itemname").defineList("item_blacklist", new ArrayList<>(Arrays.asList("minecraft:egg", "minecraft:glowstone", "quark:root_item", "druidcraft:elderberries", "minecraft:bone", "minecraft:arrow", "minecraft:ink_sac", "minecraft:rotten_flesh", "swampexpansion:cattail_seeds", "minecraft:dirt", "mysticalworld:silk_cocoon", "minecraft:powered_rail", "minecraft:rail", "botania:white_mushroom", "botania:orange_mushroom", "botania:magenta_mushroom", "botania:light_blue_mushroom", "botania:yellow_mushroom", "botania:lime_mushroom", "botania:pink_mushroom", "botania:gray_mushroom", "botania:light_gray_mushroom", "botania:cyan_mushroom", "botania:purple_mushroom", "botania:blue_mushroom", "botania:brown_mushroom", "botania:green_mushroom", "botania:red_mushroom", "botania:black_mushroom", "minecraft:sugar_cane")), (s) -> ((String) s).contains(":"));
     COMMON_BUILDER.pop();
+    COMMON_BUILDER.push("Unicorn");
+    UNICORN = COMMON_BUILDER.comment("whether or not spawns for the ultimate unicorn mod should be adjusted").define("unicorn_spawn_adjustment", true);
+    UNICORN_CHANCE = COMMON_BUILDER.comment("the chance (for all unicorns as a whole) for a unicorn to spawn, default 4").defineInRange("unicorn_chance", 4, 0, Integer.MAX_VALUE);
     COMMON_CONFIG = COMMON_BUILDER.build();
+  }
+
+  private static int unicorn = -999;
+  private static int chance = -999;
+
+  public static boolean shouldUnicorn () {
+    if (unicorn == -999) {
+      unicorn = UNICORN.get() ? 1 : 0;
+    }
+    return unicorn == 1;
+  }
+
+  public static int unicornChance () {
+    if (chance == -999) {
+      chance = UNICORN_CHANCE.get();
+    }
+    return chance;
   }
 
   public static void loadConfig(ForgeConfigSpec spec, Path path) {
@@ -67,6 +89,8 @@ public class ConfigManager {
     if (config.getType() == ModConfig.Type.COMMON) {
       COMMON_CONFIG.setConfig(config.getConfigData());
       blacklist = null;
+      unicorn = -999;
+      chance = -999;
     }
   }
 }
