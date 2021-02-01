@@ -64,19 +64,21 @@ public class Util {
       event.getSpawns().getSpawner(classification).removeIf(o -> ENTITIES_TO_REMOVE.contains(o.type.getRegistryName()));
       if (event.getName() != null && ConfigManager.shouldUnicorn()) {
         event.getSpawns().getSpawner(classification).removeIf(o -> o.type.getRegistryName().getNamespace().equals("ultimate_unicorn_mod"));
-        RegistryKey<Biome> key = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, event.getName());
-        Set<Type> types = BiomeDictionary.getTypes(key);
-        if (types.contains(Type.SWAMP) || types.contains(Type.BEACH) || types.contains(Type.RIVER)) {
-          event.getSpawns().getSpawner(classification).add(new MobSpawnInfo.Spawners(getUnicorn("hippocamp"), ConfigManager.unicornChance(), 1, 2));
-        } else if (types.contains(Type.SANDY) || types.contains(Type.WASTELAND) || types.contains(Type.MESA) || types.contains(Type.SPOOKY) || types.contains(Type.DEAD)) {
-          event.getSpawns().getSpawner(classification).add(new MobSpawnInfo.Spawners(getUnicorn("destrier"), ConfigManager.unicornChance(), 1, 1));
-        } else if (types.contains(Type.MAGICAL) || types.contains(Type.MUSHROOM) || types.contains(Type.LUSH) || types.contains(Type.FOREST)) {
-          event.getSpawns().getSpawner(classification).add(new MobSpawnInfo.Spawners(getUnicorn("unicorn"), ConfigManager.unicornChance(), 1, 2));
-          event.getSpawns().getSpawner(classification).add(new MobSpawnInfo.Spawners(getUnicorn("reindeer"), 6, 1, 3));
-        } else if (types.contains(Type.PLAINS) || types.contains(Type.SAVANNA)) {
-          event.getSpawns().getSpawner(classification).add(new MobSpawnInfo.Spawners(getUnicorn("kirin"), ConfigManager.unicornChance(), 1, 1));
-        } else if (types.contains(Type.MOUNTAIN) || types.contains(Type.HILLS) || types.contains(Type.PLATEAU)) {
-          event.getSpawns().getSpawner(classification).add(new MobSpawnInfo.Spawners(getUnicorn("pegasus"), ConfigManager.unicornChance(), 1, 2));
+        if (classification == EntityClassification.CREATURE) {
+          RegistryKey<Biome> key = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, event.getName());
+          Set<Type> types = BiomeDictionary.getTypes(key);
+          if (types.contains(Type.SWAMP) || types.contains(Type.BEACH) || types.contains(Type.RIVER)) {
+            event.getSpawns().getSpawner(classification).add(new MobSpawnInfo.Spawners(getUnicorn("hippocamp"), ConfigManager.unicornChance(), 1, 2));
+          } else if (types.contains(Type.SANDY) || types.contains(Type.WASTELAND) || types.contains(Type.MESA) || types.contains(Type.SPOOKY) || types.contains(Type.DEAD)) {
+            event.getSpawns().getSpawner(classification).add(new MobSpawnInfo.Spawners(getUnicorn("destrier"), ConfigManager.unicornChance(), 1, 1));
+          } else if (types.contains(Type.MAGICAL) || types.contains(Type.MUSHROOM) || types.contains(Type.LUSH) || types.contains(Type.FOREST)) {
+            event.getSpawns().getSpawner(classification).add(new MobSpawnInfo.Spawners(getUnicorn("unicorn"), ConfigManager.unicornChance(), 1, 2));
+            event.getSpawns().getSpawner(classification).add(new MobSpawnInfo.Spawners(getUnicorn("reindeer"), 6, 1, 3));
+          } else if (types.contains(Type.PLAINS) || types.contains(Type.SAVANNA)) {
+            event.getSpawns().getSpawner(classification).add(new MobSpawnInfo.Spawners(getUnicorn("kirin"), ConfigManager.unicornChance(), 1, 1));
+          } else if (types.contains(Type.MOUNTAIN) || types.contains(Type.HILLS) || types.contains(Type.PLATEAU)) {
+            event.getSpawns().getSpawner(classification).add(new MobSpawnInfo.Spawners(getUnicorn("pegasus"), ConfigManager.unicornChance(), 1, 2));
+          }
         }
       }
     }
