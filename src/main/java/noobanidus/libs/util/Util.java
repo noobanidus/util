@@ -1,6 +1,12 @@
 package noobanidus.libs.util;
 
 import com.google.common.collect.Sets;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.mojang.serialization.JsonOps;
+import jdk.nashorn.internal.runtime.options.Option;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.RegistryKey;
@@ -8,11 +14,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.MobSpawnInfo;
+import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -30,7 +39,10 @@ import noobanidus.libs.util.setup.CommonSetup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import static net.minecraftforge.common.BiomeDictionary.Type;
 
@@ -50,7 +62,7 @@ public class Util {
     DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientInit::init);
 
     MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
-    MinecraftForge.EVENT_BUS.addListener(this::biomeLoad);
+    MinecraftForge.EVENT_BUS.addListener(EventPriority.LOWEST, this::biomeLoad);
   }
 
   private static final Set<ResourceLocation> ENTITIES_TO_REMOVE = Sets.newHashSet(new ResourceLocation("upgrade_aquatic", "pike"));
@@ -59,7 +71,45 @@ public class Util {
     return ForgeRegistries.ENTITIES.getValue(new ResourceLocation("ultimate_unicorn_mod", name));
   }
 
+  private static ConfiguredFeature<?, ?> CHERRY_TREE = null;
+
   public void biomeLoad(BiomeLoadingEvent event) {
+    if (ConfigManager.shouldCherry() && CommonSetup.CHERRYWOOD_TREE_CONFIGURED != null) {
+      if (CHERRY_TREE == null) {
+        List<Supplier<ConfiguredFeature<?, ?>>> features = event.getGeneration().getFeatures(GenerationStage.Decoration.VEGETAL_DECORATION);
+        for (Supplier<ConfiguredFeature<?, ?>> feat : features) {
+          Optional<JsonElement> element = ConfiguredFeature.field_236264_b_.encode(feat, JsonOps.INSTANCE, JsonOps.INSTANCE.empty()).get().left();
+          if (element.isPresent()) {
+            JsonObject actual = element.get().getAsJsonObject();
+            while (actual.has("config") || actual.has("feature")) {
+              if (actual.has("config")) {
+                actual = actual.getAsJsonObject("config");
+              } else if (actual.has("feature")) {
+                actual = actual.getAsJsonObject("feature");
+              }
+            }
+            if (actual.has("trunk_provider")) {
+              JsonObject trunk = actual.getAsJsonObject("trunk_provider");
+              if (trunk.has("state")) {
+                trunk = trunk.getAsJsonObject("state");
+                if (trunk.has("Name")) {
+                  if (trunk.getAsJsonObject("Name").getAsString().equals("forbidden_and_arcanus:cherrywood_log")) {
+                    CHERRY_TREE = feat.get();
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    if (CHERRY_TREE != null) {
+      event.getGeneration().getFeatures(GenerationStage.Decoration.VEGETAL_DECORATION).removeIf(o -> o.get().equals(CHERRY_TREE));
+      if (event.getCategory() == Biome.Category.PLAINS) {
+        event.getGeneration().getFeatures(GenerationStage.Decoration.VEGETAL_DECORATION).add(() -> CommonSetup.CHERRYWOOD_TREE_CONFIGURED);
+      }
+    }
     for (EntityClassification classification : EntityClassification.values()) {
       event.getSpawns().getSpawner(classification).removeIf(o -> ENTITIES_TO_REMOVE.contains(o.type.getRegistryName()));
       if (event.getName() != null && ConfigManager.shouldUnicorn()) {

@@ -2,8 +2,6 @@ package noobanidus.libs.util.config;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
@@ -14,7 +12,6 @@ import noobanidus.libs.util.Util;
 
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Stream;
 
 public class ConfigManager {
 
@@ -25,6 +22,11 @@ public class ConfigManager {
   public static ForgeConfigSpec.BooleanValue UNICORN;
   public static ForgeConfigSpec.IntValue UNICORN_CHANCE;
 
+  public static ForgeConfigSpec.BooleanValue CHERRY_TREES;
+  public static ForgeConfigSpec.IntValue CHERRY_TREE_COUNT;
+  public static ForgeConfigSpec.DoubleValue CHERRY_TREE_EXTRA;
+  public static ForgeConfigSpec.IntValue CHERRY_TREE_EXTRA_COUNT;
+
   static {
     COMMON_BUILDER.push("Item Blacklist");
 
@@ -33,25 +35,66 @@ public class ConfigManager {
     COMMON_BUILDER.push("Unicorn");
     UNICORN = COMMON_BUILDER.comment("whether or not spawns for the ultimate unicorn mod should be adjusted").define("unicorn_spawn_adjustment", true);
     UNICORN_CHANCE = COMMON_BUILDER.comment("the chance (for all unicorns as a whole) for a unicorn to spawn, default 4").defineInRange("unicorn_chance", 4, 0, Integer.MAX_VALUE);
+    COMMON_BUILDER.pop();
+    COMMON_BUILDER.push("Cherry Trees");
+    CHERRY_TREES = COMMON_BUILDER.comment("whether or not the spawn frequency of cherry trees should be adjusted").define("cherry_tree", true);
+    CHERRY_TREE_COUNT = COMMON_BUILDER.comment("the count chance of a cherry tree per chunk").defineInRange("cherry_tree_count", 0, 0, Integer.MAX_VALUE);
+    CHERRY_TREE_EXTRA = COMMON_BUILDER.comment("the chance of an extra tree per chunk").defineInRange("cherry_tree_extra", 0.1, 0, Integer.MAX_VALUE);
+    CHERRY_TREE_EXTRA_COUNT = COMMON_BUILDER.comment("the number of extra trees that should be placed").defineInRange("cherry_tree_extra_count", 1, 0, Integer.MAX_VALUE);
+    COMMON_BUILDER.pop();
     COMMON_CONFIG = COMMON_BUILDER.build();
   }
 
   private static int unicorn = -999;
   private static int chance = -999;
 
-  public static boolean shouldUnicorn () {
+  public static boolean shouldUnicorn() {
     if (unicorn == -999) {
       unicorn = UNICORN.get() ? 1 : 0;
     }
     return unicorn == 1;
   }
 
-  public static int unicornChance () {
+  public static int unicornChance() {
     if (chance == -999) {
       chance = UNICORN_CHANCE.get();
     }
     return chance;
   }
+
+  private static int cherry_trees = -999;
+  private static int cherry_tree_count = -999;
+  private static float cherry_tree_extra = -999;
+  private static int cherry_tree_extra_count = -999;
+
+  public static boolean shouldCherry() {
+    if (cherry_trees == -999) {
+      cherry_trees = CHERRY_TREES.get() ? 1 : 0;
+    }
+    return cherry_trees == 1;
+  }
+
+  public static int cherryCount() {
+    if (cherry_tree_count == -999) {
+      cherry_tree_count = CHERRY_TREE_COUNT.get();
+    }
+    return cherry_tree_count;
+  }
+
+  public static float cherryExtra() {
+    if (cherry_tree_extra == -999) {
+      cherry_tree_extra = (float) (double) CHERRY_TREE_EXTRA.get();
+    }
+    return cherry_tree_extra;
+  }
+
+  public static int cherryExtraCount() {
+    if (cherry_tree_extra_count == -999) {
+      cherry_tree_extra_count = CHERRY_TREE_EXTRA_COUNT.get();
+    }
+    return cherry_tree_extra_count;
+  }
+
 
   public static void loadConfig(ForgeConfigSpec spec, Path path) {
     CommentedFileConfig configData = CommentedFileConfig.builder(path).sync().autosave().writingMode(WritingMode.REPLACE).build();
@@ -69,7 +112,7 @@ public class ConfigManager {
 
   private static Set<Item> blacklist = null;
 
-  public static Set<Item> getItemBlacklist () {
+  public static Set<Item> getItemBlacklist() {
     if (blacklist == null) {
       blacklist = new HashSet<>();
       for (String i : ITEM_BLACKLIST.get()) {
@@ -91,6 +134,10 @@ public class ConfigManager {
       blacklist = null;
       unicorn = -999;
       chance = -999;
+      cherry_trees = -999;
+      cherry_tree_count = -999;
+      cherry_tree_extra = -999;
+      cherry_tree_extra_count = -999;
     }
   }
 }
