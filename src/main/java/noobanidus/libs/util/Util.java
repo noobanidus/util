@@ -7,15 +7,17 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import jdk.nashorn.internal.runtime.options.Option;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.gen.feature.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
@@ -24,6 +26,7 @@ import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -42,6 +45,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 
 import static net.minecraftforge.common.BiomeDictionary.Type;
@@ -74,30 +78,22 @@ public class Util {
   private static ConfiguredFeature<?, ?> CHERRY_TREE = null;
 
   public void biomeLoad(BiomeLoadingEvent event) {
-    if (ConfigManager.shouldCherry() && CommonSetup.CHERRYWOOD_TREE_CONFIGURED != null) {
+    if (ConfigManager.shouldCherry() && CommonSetup.CHERRYWOOD_TREE_CONFIGURED != null/* && ModList.get().isLoaded("forbidden_and_arcanus")*/) {
       if (CHERRY_TREE == null) {
-        List<Supplier<ConfiguredFeature<?, ?>>> features = event.getGeneration().getFeatures(GenerationStage.Decoration.VEGETAL_DECORATION);
-        for (Supplier<ConfiguredFeature<?, ?>> feat : features) {
-          Optional<JsonElement> element = ConfiguredFeature.field_236264_b_.encode(feat, JsonOps.INSTANCE, JsonOps.INSTANCE.empty()).get().left();
-          if (element.isPresent()) {
-            JsonObject actual = element.get().getAsJsonObject();
-            while (actual.has("config") || actual.has("feature")) {
-              if (actual.has("config")) {
-                actual = actual.getAsJsonObject("config");
-              } else if (actual.has("feature")) {
-                actual = actual.getAsJsonObject("feature");
-              }
-            }
-            if (actual.has("trunk_provider")) {
-              JsonObject trunk = actual.getAsJsonObject("trunk_provider");
-              if (trunk.has("state")) {
-                trunk = trunk.getAsJsonObject("state");
-                if (trunk.has("Name")) {
-                  if (trunk.getAsJsonObject("Name").getAsString().equals("forbidden_and_arcanus:cherrywood_log")) {
-                    CHERRY_TREE = feat.get();
-                    break;
-                  }
-                }
+        for (Supplier<ConfiguredFeature<?, ?>> feat : event.getGeneration().getFeatures(GenerationStage.Decoration.VEGETAL_DECORATION)) {
+          ConfiguredFeature<?, ?> cf = feat.get();
+          IFeatureConfig config = cf.config;
+          while (config instanceof DecoratedFeatureConfig) {
+            config = ((DecoratedFeatureConfig) config).feature.get().config;
+          }
+
+          if (config instanceof BaseTreeFeatureConfig) {
+            BaseTreeFeatureConfig treeConfig = (BaseTreeFeatureConfig) config;
+            ResourceLocation log = treeConfig.trunkProvider.getBlockState(ThreadLocalRandom.current(), BlockPos.ZERO).getBlock().getRegistryName();
+            ResourceLocation leaves = treeConfig.leavesProvider.getBlockState(ThreadLocalRandom.current(), BlockPos.ZERO).getBlock().getRegistryName();
+            if (log != null && leaves != null && log.getNamespace().equals("forbidden_and_arcanus") && leaves.getNamespace().equals("forbidden_and_arcanus")) {
+              if (log.getPath().equals("cherrywood_log") && leaves.getNamespace().equals("cherrywood_leaves")) {
+                CHERRY_TREE = cf;
               }
             }
           }
