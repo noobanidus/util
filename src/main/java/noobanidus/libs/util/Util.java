@@ -1,13 +1,8 @@
 package noobanidus.libs.util;
 
 import com.google.common.collect.Sets;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
-import jdk.nashorn.internal.runtime.options.Option;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.RegistryKey;
@@ -18,6 +13,8 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.*;
+import net.minecraft.world.gen.placement.AtSurfaceWithExtraConfig;
+import net.minecraft.world.gen.placement.Placement;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
@@ -41,8 +38,10 @@ import noobanidus.libs.util.setup.ClientInit;
 import noobanidus.libs.util.setup.CommonSetup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
-import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -75,10 +74,21 @@ public class Util {
     return ForgeRegistries.ENTITIES.getValue(new ResourceLocation("ultimate_unicorn_mod", name));
   }
 
-  private static ConfiguredFeature<?, ?> CHERRY_TREE = null;
+  private static boolean compare(Supplier<ConfiguredFeature<?, ?>> a, Supplier<ConfiguredFeature<?, ?>> b) {
+    Optional<JsonElement> jA = ConfiguredFeature.field_242763_a.encode(a.get(), JsonOps.INSTANCE, JsonOps.INSTANCE.empty()).get().left();
+    Optional<JsonElement> jB = ConfiguredFeature.field_242763_a.encode(b.get(), JsonOps.INSTANCE, JsonOps.INSTANCE.empty()).get().left();
+
+    if (!jA.isPresent() || !jB.isPresent()) {
+      return false;
+    }
+
+    return jA.get().equals(jB.get());
+  }
+
+  private static Supplier<ConfiguredFeature<?, ?>> CHERRY_TREE = null;
 
   public void biomeLoad(BiomeLoadingEvent event) {
-    if (ConfigManager.shouldCherry() && CommonSetup.CHERRYWOOD_TREE_CONFIGURED != null/* && ModList.get().isLoaded("forbidden_and_arcanus")*/) {
+    if (ConfigManager.shouldCherry() && CommonSetup.CHERRYWOOD_TREE_CONFIGURED != null && ModList.get().isLoaded("forbidden_arcanus")) {
       if (CHERRY_TREE == null) {
         for (Supplier<ConfiguredFeature<?, ?>> feat : event.getGeneration().getFeatures(GenerationStage.Decoration.VEGETAL_DECORATION)) {
           ConfiguredFeature<?, ?> cf = feat.get();
@@ -89,19 +99,17 @@ public class Util {
 
           if (config instanceof BaseTreeFeatureConfig) {
             BaseTreeFeatureConfig treeConfig = (BaseTreeFeatureConfig) config;
-            ResourceLocation log = treeConfig.trunkProvider.getBlockState(ThreadLocalRandom.current(), BlockPos.ZERO).getBlock().getRegistryName();
-            ResourceLocation leaves = treeConfig.leavesProvider.getBlockState(ThreadLocalRandom.current(), BlockPos.ZERO).getBlock().getRegistryName();
-            if (log != null && leaves != null && log.getNamespace().equals("forbidden_and_arcanus") && leaves.getNamespace().equals("forbidden_and_arcanus")) {
-              if (log.getPath().equals("cherrywood_log") && leaves.getNamespace().equals("cherrywood_leaves")) {
-                CHERRY_TREE = cf;
-              }
+            String log = Objects.requireNonNull(treeConfig.trunkProvider.getBlockState(ThreadLocalRandom.current(), BlockPos.ZERO).getBlock().getRegistryName()).toString();
+            String leaves = Objects.requireNonNull(treeConfig.leavesProvider.getBlockState(ThreadLocalRandom.current(), BlockPos.ZERO).getBlock().getRegistryName()).toString();
+            if (log.equals("forbidden_arcanus:cherrywood_log") && leaves.equals("forbidden_arcanus:cherrywood_leaves")) {
+              CHERRY_TREE = feat;
             }
           }
         }
       }
     }
     if (CHERRY_TREE != null) {
-      event.getGeneration().getFeatures(GenerationStage.Decoration.VEGETAL_DECORATION).removeIf(o -> o.get().equals(CHERRY_TREE));
+      event.getGeneration().getFeatures(GenerationStage.Decoration.VEGETAL_DECORATION).removeIf(o -> compare(CHERRY_TREE, o));
       if (event.getCategory() == Biome.Category.PLAINS) {
         event.getGeneration().getFeatures(GenerationStage.Decoration.VEGETAL_DECORATION).add(() -> CommonSetup.CHERRYWOOD_TREE_CONFIGURED);
       }

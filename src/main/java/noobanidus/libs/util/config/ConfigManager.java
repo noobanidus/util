@@ -39,7 +39,7 @@ public class ConfigManager {
     COMMON_BUILDER.push("Cherry Trees");
     CHERRY_TREES = COMMON_BUILDER.comment("whether or not the spawn frequency of cherry trees should be adjusted").define("cherry_tree", true);
     CHERRY_TREE_COUNT = COMMON_BUILDER.comment("the count chance of a cherry tree per chunk").defineInRange("cherry_tree_count", 0, 0, Integer.MAX_VALUE);
-    CHERRY_TREE_EXTRA = COMMON_BUILDER.comment("the chance of an extra tree per chunk").defineInRange("cherry_tree_extra", 0.02, 0, Integer.MAX_VALUE);
+    CHERRY_TREE_EXTRA = COMMON_BUILDER.comment("the chance of an extra tree per chunk").defineInRange("cherry_tree_extra", 0.05, 0, Integer.MAX_VALUE);
     CHERRY_TREE_EXTRA_COUNT = COMMON_BUILDER.comment("the number of extra trees that should be placed").defineInRange("cherry_tree_extra_count", 1, 0, Integer.MAX_VALUE);
     COMMON_BUILDER.pop();
     COMMON_CONFIG = COMMON_BUILDER.build();
