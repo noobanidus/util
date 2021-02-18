@@ -1,5 +1,7 @@
 package noobanidus.libs.util.setup;
 
+import net.minecraft.block.SpawnerBlock;
+import net.minecraft.item.SpawnEggItem;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 

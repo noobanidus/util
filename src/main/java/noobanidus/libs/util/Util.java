@@ -3,8 +3,11 @@ package noobanidus.libs.util;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.SpawnerBlock;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
+import net.minecraft.item.SpawnEggItem;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -12,14 +15,17 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.*;
-import net.minecraft.world.gen.placement.AtSurfaceWithExtraConfig;
-import net.minecraft.world.gen.placement.Placement;
+import net.minecraft.world.gen.feature.BaseTreeFeatureConfig;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.gen.feature.DecoratedFeatureConfig;
+import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
@@ -38,8 +44,6 @@ import noobanidus.libs.util.setup.ClientInit;
 import noobanidus.libs.util.setup.CommonSetup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -66,6 +70,7 @@ public class Util {
 
     MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
     MinecraftForge.EVENT_BUS.addListener(EventPriority.LOWEST, this::biomeLoad);
+    MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGHEST, this::onRightClickBlock);
   }
 
   private static final Set<ResourceLocation> ENTITIES_TO_REMOVE = Sets.newHashSet(new ResourceLocation("upgrade_aquatic", "pike"));
@@ -146,5 +151,15 @@ public class Util {
     itemsCommand = new CommandItems(event.getDispatcher()).register();
     entitiesCommand = new CommandEntities(event.getDispatcher()).register();
     itemKillCommand = new CommandItemKill(event.getDispatcher()).register();
+  }
+
+  public void onRightClickBlock (PlayerInteractEvent.RightClickBlock event) {
+    if (ConfigManager.blockSpawners()) {
+      if (event.getItemStack().getItem() instanceof SpawnEggItem) {
+        if (event.getWorld().getBlockState(event.getPos()).getBlock() instanceof SpawnerBlock) {
+          event.setUseItem(Event.Result.DENY);
+        }
+      }
+    }
   }
 }

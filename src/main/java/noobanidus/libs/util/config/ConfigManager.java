@@ -27,6 +27,8 @@ public class ConfigManager {
   public static ForgeConfigSpec.DoubleValue CHERRY_TREE_EXTRA;
   public static ForgeConfigSpec.IntValue CHERRY_TREE_EXTRA_COUNT;
 
+  public static ForgeConfigSpec.BooleanValue SPAWNER_BLOCK;
+
   static {
     COMMON_BUILDER.push("Item Blacklist");
 
@@ -41,6 +43,9 @@ public class ConfigManager {
     CHERRY_TREE_COUNT = COMMON_BUILDER.comment("the count chance of a cherry tree per chunk").defineInRange("cherry_tree_count", 0, 0, Integer.MAX_VALUE);
     CHERRY_TREE_EXTRA = COMMON_BUILDER.comment("the chance of an extra tree per chunk").defineInRange("cherry_tree_extra", 0.05, 0, Integer.MAX_VALUE);
     CHERRY_TREE_EXTRA_COUNT = COMMON_BUILDER.comment("the number of extra trees that should be placed").defineInRange("cherry_tree_extra_count", 1, 0, Integer.MAX_VALUE);
+    COMMON_BUILDER.pop();
+    COMMON_BUILDER.push("Spawners");
+    SPAWNER_BLOCK = COMMON_BUILDER.comment("whether or not spawners should be blocked from having their spawn entity replaced by right-clicking with a spawn egg").define("block_spawner_eggs", true);
     COMMON_BUILDER.pop();
     COMMON_CONFIG = COMMON_BUILDER.build();
   }
@@ -95,6 +100,14 @@ public class ConfigManager {
     return cherry_tree_extra_count;
   }
 
+  private static int spawnerBlock = -999;
+
+  public static boolean blockSpawners () {
+    if (spawnerBlock == -999) {
+      spawnerBlock = SPAWNER_BLOCK.get() ? 1 : 0;
+    }
+    return spawnerBlock == 1;
+  }
 
   public static void loadConfig(ForgeConfigSpec spec, Path path) {
     CommentedFileConfig configData = CommentedFileConfig.builder(path).sync().autosave().writingMode(WritingMode.REPLACE).build();
@@ -138,6 +151,7 @@ public class ConfigManager {
       cherry_tree_count = -999;
       cherry_tree_extra = -999;
       cherry_tree_extra_count = -999;
+      spawnerBlock = -999;
     }
   }
 }
