@@ -37,6 +37,7 @@ apply from: 'gradle/top.gradle'
 apply from: 'gradle/hwyla.gradle'
 apply from: 'gradle/dynamic_trees.gradle'
 apply from: 'gradle/mysticalworld.gradle'
+apply from: 'gradle/aequivaleo.gradle'
 apply from: 'gradle/minify_jsons.gradle'
 
 // Load publishing modules
