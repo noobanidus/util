@@ -1,9 +1,9 @@
-package noobanidus.libs.util;
+package noobanidus.mods.util;
 
 import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.block.Blocks;
+import com.tterrag.registrate.util.nullness.NonNullSupplier;
 import net.minecraft.block.SpawnerBlock;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -36,12 +36,16 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.ForgeRegistries;
-import noobanidus.libs.util.commands.CommandEntities;
-import noobanidus.libs.util.commands.CommandItemKill;
-import noobanidus.libs.util.commands.CommandItems;
-import noobanidus.libs.util.config.ConfigManager;
-import noobanidus.libs.util.setup.ClientInit;
-import noobanidus.libs.util.setup.CommonSetup;
+import noobanidus.libs.noobutil.registrate.CustomRegistrate;
+import noobanidus.mods.util.commands.CommandConfig;
+import noobanidus.mods.util.commands.CommandEntities;
+import noobanidus.mods.util.commands.CommandItemKill;
+
+import noobanidus.mods.util.commands.CommandItems;
+import noobanidus.mods.util.config.ConfigManager;
+import noobanidus.mods.util.init.ModTags;
+import noobanidus.mods.util.setup.ClientInit;
+import noobanidus.mods.util.setup.CommonSetup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,6 +61,7 @@ import static net.minecraftforge.common.BiomeDictionary.Type;
 public class Util {
   public static final Logger LOG = LogManager.getLogger();
   public static final String MODID = "util";
+  public static CustomRegistrate REGISTRATE;
 
   public Util() {
     IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -66,11 +71,15 @@ public class Util {
     modBus.addListener(ConfigManager::onLoading);
     modBus.addListener(ConfigManager::onReload);
 
+    REGISTRATE = CustomRegistrate.create(MODID);
+
     DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientInit::init);
 
     MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
     MinecraftForge.EVENT_BUS.addListener(EventPriority.LOWEST, this::biomeLoad);
     MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGHEST, this::onRightClickBlock);
+
+    ModTags.load();
   }
 
   private static final Set<ResourceLocation> ENTITIES_TO_REMOVE = Sets.newHashSet(new ResourceLocation("upgrade_aquatic", "pike"));
@@ -143,14 +152,11 @@ public class Util {
     }
   }
 
-  private CommandItems itemsCommand;
-  private CommandEntities entitiesCommand;
-  private CommandItemKill itemKillCommand;
-
   public void serverStarting(RegisterCommandsEvent event) {
-    itemsCommand = new CommandItems(event.getDispatcher()).register();
-    entitiesCommand = new CommandEntities(event.getDispatcher()).register();
-    itemKillCommand = new CommandItemKill(event.getDispatcher()).register();
+    CommandItems.register(event.getDispatcher());
+    CommandEntities.register(event.getDispatcher());
+    CommandConfig.register(event.getDispatcher());
+    CommandItemKill.register(event.getDispatcher());
   }
 
   public void onRightClickBlock (PlayerInteractEvent.RightClickBlock event) {

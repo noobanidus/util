@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:ender_pearl",
+    "minecraft:ghast_tear",
+    "minecraft:shulker_shell",
+    "minecraft:enchanted_book"
+  ]
+}

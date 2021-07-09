@@ -1,4 +1,4 @@
-package noobanidus.libs.util.events;
+package noobanidus.mods.util.events;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -7,7 +7,7 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import noobanidus.libs.util.Util;
+import noobanidus.mods.util.Util;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Util.MODID)
 public class TooltipEvent {

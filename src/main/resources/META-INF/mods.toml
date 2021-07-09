@@ -1,10 +1,10 @@
 modLoader="javafml" #mandatory
-loaderVersion="[35,)" #mandatory (26 is current forge version)
+loaderVersion="[36,)" #mandatory (26 is current forge version)
 issueTrackerURL="https://github.com/noobanidus/util/issues" #optional
 license="https://github.com/noobanidus/util/blob/master/LICENSE"
 [[mods]] #mandatory
 modId="util" #mandatory
-version="${file.jarVersion}" #mandatory
+version="${version}" #mandatory
 displayName="Util" #mandatory
 displayURL="https://minecraft.curseforge.com/projects/util" #optional
 authors="Noobanidus"
@@ -14,12 +14,18 @@ Server utility functions.
 [[dependencies.Util]] #optional
     modId="forge" #mandatory
     mandatory=true #mandatory
-    versionRange="[35,)" #mandatory
+    versionRange="[36,)" #mandatory
     ordering="NONE"
     side="BOTH"
 [[dependencies.Util]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.4,)"
+    versionRange="[1.16.5,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.Util]]
+    modId="aequivaleo"
+    mandatory=true
+    versionRange="[0.1.35-ALPHA,)"
     ordering="NONE"
     side="BOTH"

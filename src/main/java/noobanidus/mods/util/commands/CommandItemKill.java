@@ -1,4 +1,4 @@
-package noobanidus.libs.util.commands;
+package noobanidus.mods.util.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -12,28 +12,21 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import noobanidus.libs.util.config.ConfigManager;
+import noobanidus.mods.util.config.ConfigManager;
 
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CommandItemKill {
-  private final CommandDispatcher<CommandSource> dispatcher;
-
-  public CommandItemKill(CommandDispatcher<CommandSource> dispatcher) {
-    this.dispatcher = dispatcher;
+  public static void register (CommandDispatcher<CommandSource> dispatcher) {
+    dispatcher.register(builder(Commands.literal("itemkill").requires((o) -> o.hasPermissionLevel(2))));
   }
 
-  public CommandItemKill register() {
-    this.dispatcher.register(builder(Commands.literal("itemkill").requires((o) -> o.hasPermissionLevel(2))));
-    return this;
-  }
-
-  private String format(double value) {
+  private static String format(double value) {
     return String.format("%.2f", value);
   }
 
-  public LiteralArgumentBuilder<CommandSource> builder(LiteralArgumentBuilder<CommandSource> builder) {
+  public static LiteralArgumentBuilder<CommandSource> builder(LiteralArgumentBuilder<CommandSource> builder) {
     builder.executes(c -> {
       Set<Item> blacklist = ConfigManager.getItemBlacklist();
       MinecraftServer server = c.getSource().getServer();

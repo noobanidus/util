@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:diamond",
+    "minecraft:nautilus_shell",
+    "minecraft:crying_obsidian"
+  ]
+}

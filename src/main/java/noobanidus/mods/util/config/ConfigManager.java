@@ -1,4 +1,4 @@
-package noobanidus.libs.util.config;
+package noobanidus.mods.util.config;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
@@ -8,7 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.registries.ForgeRegistries;
-import noobanidus.libs.util.Util;
+import noobanidus.mods.util.Util;
 
 import java.nio.file.Path;
 import java.util.*;

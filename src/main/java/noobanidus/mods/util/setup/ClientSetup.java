@@ -1,4 +1,4 @@
-package noobanidus.libs.util.setup;
+package noobanidus.mods.util.setup;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

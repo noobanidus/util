@@ -1,4 +1,4 @@
-package noobanidus.libs.util.setup;
+package noobanidus.mods.util.setup;
 
 import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
@@ -12,7 +12,7 @@ import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.trunkplacer.ForkyTrunkPlacer;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
-import noobanidus.libs.util.config.ConfigManager;
+import noobanidus.mods.util.config.ConfigManager;
 
 public class CommonSetup {
   public static ConfiguredFeature<?, ?> CHERRYWOOD_TREE_CONFIGURED = null;

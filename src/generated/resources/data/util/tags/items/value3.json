@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:gunpowder",
+    "minecraft:redstone",
+    "minecraft:glowstone",
+    "minecraft:lapis_lazuli",
+    "minecraft:experience_bottle",
+    "minecraft:prismarine_crystals"
+  ]
+}

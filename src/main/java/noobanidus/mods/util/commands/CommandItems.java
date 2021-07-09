@@ -1,4 +1,4 @@
-package noobanidus.libs.util.commands;
+package noobanidus.mods.util.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -17,22 +17,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class CommandItems {
-  private final CommandDispatcher<CommandSource> dispatcher;
-
-  public CommandItems(CommandDispatcher<CommandSource> dispatcher) {
-    this.dispatcher = dispatcher;
+  public static void register (CommandDispatcher<CommandSource> dispatcher) {
+    dispatcher.register(builder(Commands.literal("itemlist").requires((o) -> o.hasPermissionLevel(2))));
   }
 
-  public CommandItems register() {
-    this.dispatcher.register(builder(Commands.literal("itemlist").requires((o) -> o.hasPermissionLevel(2))));
-    return this;
-  }
-
-  private String format(double value) {
+  private static String format(double value) {
     return String.format("%.2f", value);
   }
 
-  public LiteralArgumentBuilder<CommandSource> builder(LiteralArgumentBuilder<CommandSource> builder) {
+  public static LiteralArgumentBuilder<CommandSource> builder(LiteralArgumentBuilder<CommandSource> builder) {
     builder.executes(c -> {
       MinecraftServer server = c.getSource().getServer();
       List<RegistryKey<World>> unloaded = new ArrayList<>();

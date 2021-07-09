@@ -1,4 +1,4 @@
-package noobanidus.libs.util.setup;
+package noobanidus.mods.util.setup;
 
 import net.minecraft.block.SpawnerBlock;
 import net.minecraft.item.SpawnEggItem;
