@@ -1,13 +1,14 @@
 package noobanidus.mods.util.aeq;
 
 import com.ldtteam.aequivaleo.api.IAequivaleoAPI;
+import com.ldtteam.aequivaleo.api.results.IEquivalencyResults;
 import com.ldtteam.aequivaleo.api.results.IResultsInformationCache;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.world.World;
+import noobanidus.mods.util.init.ModAeq;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -33,11 +34,20 @@ public class ConversionCache {
   }
 
   public ValueAmounts getAmounts(ItemStack stack) {
-    return mappings.computeIfAbsent(stack.getItem(), item -> {
+    mappings.clear();
+    ValueAmounts result = mappings.get(stack.getItem());
+    if (result == null) {
+      IEquivalencyResults cache = IAequivaleoAPI.getInstance().getEquivalencyResults(worldKey);
+      Optional<ValueAmounts> am = cache.mappedDataFor(ModAeq.VALUE.get(), stack.getItem());
+      result = am.orElse(ValueAmounts.EMPTY);
+      mappings.put(stack.getItem(), result);
+    }
+    return result;
+/*    return mappings.computeIfAbsent(stack.getItem(), item -> {
       IResultsInformationCache aeqCache = IAequivaleoAPI.getInstance().getResultsInformationCache(worldKey);
-      Optional<ValueAmounts> am = aeqCache.getCacheFor(AeqPlugin.VALUE.get(), item);
+      Optional<ValueAmounts> am = aeqCache.getCacheFor(ModAeq.VALUE.get(), item);
       return am.orElse(ValueAmounts.EMPTY);
-    });
+    });*/
   }
 
   public void clear() {

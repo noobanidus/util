@@ -9,7 +9,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 public class ValueAmounts implements INBTSerializable<IntArrayNBT> {
   public static final ValueAmounts EMPTY = new ValueAmounts();
 
-  public static final Codec<ValueAmounts> CODEC = RecordCodecBuilder.create(instance ->
+/*  public static final Codec<ValueAmounts> CODEC = RecordCodecBuilder.create(instance ->
       instance.group(
           Codec.INT.fieldOf("value1").forGetter(i -> i.get(0)),
           Codec.INT.fieldOf("value2").forGetter(i -> i.get(1)),
@@ -27,7 +27,7 @@ public class ValueAmounts implements INBTSerializable<IntArrayNBT> {
           Codec.INT.fieldOf("value50").forGetter(i -> i.get(13)),
           Codec.INT.fieldOf("value75").forGetter(i -> i.get(14)),
           Codec.INT.fieldOf("value100").forGetter(i -> i.get(15))
-      ).apply(instance, ValueAmounts::new));
+      ).apply(instance, ValueAmounts::new));*/
 
   public int[] elements = new int[16];
 
@@ -88,11 +88,11 @@ public class ValueAmounts implements INBTSerializable<IntArrayNBT> {
 
   @Override
   public void deserializeNBT(IntArrayNBT incoming) {
-    System.arraycopy(incoming, 0, elements, 0, 16);
+    System.arraycopy(incoming.getIntArray(), 0, elements, 0, 16);
   }
 
   public static class Builder {
-    private Object2IntOpenHashMap<String> valueMap = new Object2IntOpenHashMap<>();
+    private final Object2IntOpenHashMap<String> valueMap = new Object2IntOpenHashMap<>();
 
     public Builder() {
       valueMap.put("value1", 0);

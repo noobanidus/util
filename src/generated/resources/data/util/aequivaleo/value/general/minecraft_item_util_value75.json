@@ -1,0 +1,15 @@
+{
+  "mode": "ADDITIVE",
+  "targets": {
+    "type": "aequivaleo:tag",
+    "data": {
+      "tagType": "minecraft:item",
+      "tagName": "util:value75",
+      "count": 1.0
+    }
+  },
+  "compounds": {
+    "amount": 1.0,
+    "type": "util:value75"
+  }
+}
