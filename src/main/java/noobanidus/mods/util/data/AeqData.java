@@ -14,7 +14,7 @@ import noobanidus.mods.util.init.ModAeq;
 
 import java.util.Map;
 
-public class AeqData extends LockedInformationProvider {
+public class AeqData extends ForcedInformationProvider {
   public AeqData(DataGenerator dataGenerator) {
     super(Util.MODID, dataGenerator);
   }

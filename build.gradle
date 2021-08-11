@@ -22,6 +22,10 @@ ext.modLicense = getOptionalString('mod_license')
 // Load Minecraft specific properties
 ext.mcVersion = getRequiredString('minecraft_version')
 
+repositories {
+    mavenLocal()
+}
+
 // Load build-time modules
 apply from: 'gradle/build_number.gradle'
 apply from: 'gradle/git_changelog.gradle'

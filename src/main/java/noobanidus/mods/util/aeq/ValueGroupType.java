@@ -58,19 +58,20 @@ public class ValueGroupType extends ForgeRegistryEntry<ICompoundTypeGroup> imple
     return true;
   }
 
-  @Override
-  public Optional<ValueAmounts> convertToCacheEntry(Set<CompoundInstance> instances) {
-    if (instances.isEmpty()) {
-      return Optional.empty();
-    }
+    @Override
+    public Optional<?> mapEntry(final ICompoundContainer<?> container, final Set<CompoundInstance> instances)
+    {
+        if (instances.isEmpty()) {
+            return Optional.empty();
+        }
 
-    ValueAmounts.Builder builder = new ValueAmounts.Builder();
-    for (CompoundInstance i : instances) {
-      ICompoundType t = i.getType();
-      if (i.getType() instanceof ValueType) {
-        builder.put(((ValueType) i.getType()).getId(), i.getAmount().intValue());
-      }
+        ValueAmounts.Builder builder = new ValueAmounts.Builder();
+        for (CompoundInstance i : instances) {
+            ICompoundType t = i.getType();
+            if (t instanceof ValueType) {
+                builder.put(((ValueType) t).getId(), i.getAmount());
+            }
+        }
+        return Optional.of(builder.build());
     }
-    return Optional.of(builder.build());
-  }
 }
