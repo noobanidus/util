@@ -3,6 +3,7 @@ package noobanidus.mods.util.aeq;
 import com.ldtteam.aequivaleo.api.compound.type.ICompoundType;
 import com.ldtteam.aequivaleo.api.plugin.AequivaleoPlugin;
 import com.ldtteam.aequivaleo.api.plugin.IAequivaleoPlugin;
+import com.ldtteam.aequivaleo.vanilla.api.tags.ITagEquivalencyRegistry;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.minecraft.item.Item;
 import net.minecraft.util.RegistryKey;
@@ -11,6 +12,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.Tags;
 import noobanidus.mods.util.Util;
 import noobanidus.mods.util.UtilTags;
+import noobanidus.mods.util.init.ModAeq;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -35,10 +37,16 @@ public class AeqPlugin implements IAequivaleoPlugin {
     return Util.MODID;
   }
 
-  @Override
-  public void onReloadStartedFor(ServerWorld world) {
-    SERVER.clear();
-  }
+    @Override
+    public void onCommonSetup()
+    {
+        ModAeq.MAP.keySet().forEach(ITagEquivalencyRegistry.getInstance()::addTag);
+    }
+
+    @Override
+      public void onReloadStartedFor(ServerWorld world) {
+        SERVER.clear();
+      }
 
   @Override
   public void onDataSynced(RegistryKey<World> worldRegistryKey) {

@@ -22,7 +22,7 @@ public class ConversionCache {
 
   private final Map<Item, ValueAmounts> mappings = new HashMap<>();
 
-  public int getAmount(ItemStack stack, boolean wholeStack) {
+  public double getAmount(ItemStack stack, boolean wholeStack) {
     int count = stack.getCount();
     if (count > 1) {
       stack = stack.copy();
@@ -30,7 +30,7 @@ public class ConversionCache {
     }
 
     ValueAmounts amount = getAmounts(stack);
-    return wholeStack && count > 1 ? amount.sum() * count : amount.sum();
+    return (wholeStack && count > 1 ? amount.sum() * count : amount.sum());
   }
 
   public ValueAmounts getAmounts(ItemStack stack) {
