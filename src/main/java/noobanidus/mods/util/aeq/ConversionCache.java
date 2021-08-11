@@ -34,7 +34,6 @@ public class ConversionCache {
   }
 
   public ValueAmounts getAmounts(ItemStack stack) {
-    mappings.clear();
     ValueAmounts result = mappings.get(stack.getItem());
     if (result == null) {
       IEquivalencyResults cache = IAequivaleoAPI.getInstance().getEquivalencyResults(worldKey);

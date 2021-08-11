@@ -2,6 +2,7 @@ package noobanidus.mods.util.data;
 
 import com.ldtteam.aequivaleo.api.compound.CompoundInstance;
 import com.ldtteam.aequivaleo.api.compound.information.datagen.ForcedInformationProvider;
+import com.ldtteam.aequivaleo.api.compound.information.datagen.LockedInformationProvider;
 import com.ldtteam.aequivaleo.api.compound.type.ICompoundType;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.minecraft.data.DataGenerator;
@@ -13,7 +14,7 @@ import noobanidus.mods.util.init.ModAeq;
 
 import java.util.Map;
 
-public class AeqData extends ForcedInformationProvider {
+public class AeqData extends LockedInformationProvider {
   public AeqData(DataGenerator dataGenerator) {
     super(Util.MODID, dataGenerator);
   }
