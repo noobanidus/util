@@ -11,6 +11,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.ForgeRegistries;
 import noobanidus.mods.util.aeq.AeqPlugin;
 import noobanidus.mods.util.aeq.ConversionCache;
 import noobanidus.mods.util.init.ModAeq;
@@ -25,10 +26,10 @@ public class CommandToolLevel {
       MinecraftServer server = c.getSource().getServer();
       World world = server.getWorld(World.OVERWORLD);
       ConversionCache cache = AeqPlugin.get(world);
-      for (ITag.INamedTag<Item> tag : ModAeq.MAP.keySet()) {
-        for (Item i : tag.getAllElements()) {
-          double amount = cache.getAmount(new ItemStack(i, 1), true);
-          c.getSource().sendFeedback(new TranslationTextComponent("util.blah", new TranslationTextComponent(i.getTranslationKey()), new StringTextComponent("" + amount)), true);
+      for (Item item : ForgeRegistries.ITEMS.getValues()) {
+        double amount = cache.getAmount(new ItemStack(item, 1), true);
+        if (amount > 0) {
+          c.getSource().sendFeedback(new TranslationTextComponent("util.blah", new TranslationTextComponent(item.getTranslationKey()), new StringTextComponent("" + amount)), true);
         }
       }
       return 1;

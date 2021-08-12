@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "minecraft:iron_nugget",
     "minecraft:coal",
     "minecraft:quartz"
   ]
