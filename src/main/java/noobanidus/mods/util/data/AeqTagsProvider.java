@@ -14,8 +14,8 @@ public class AeqTagsProvider extends ItemTagsProvider {
   @Override
   protected void registerTags() {
     getOrCreateBuilder(UtilTags.VALUE1).add(Items.IRON_NUGGET, Items.COAL, Items.QUARTZ);    // Coal, Iron Nugget, Quartz
-    getOrCreateBuilder(UtilTags.VALUE2).add(Items.SLIME_BALL, Items.NETHER_WART);    // Slime Ball, Nether Wart
-    getOrCreateBuilder(UtilTags.VALUE3).add(Items.GOLD_NUGGET, Items.GUNPOWDER, Items.REDSTONE, Items.GLOWSTONE, Items.LAPIS_LAZULI, Items.EXPERIENCE_BOTTLE, Items.PRISMARINE_CRYSTALS);    // Gunpowder, Redstone, Glowstone, Lapis Lazuli, Experience Bottle
+    getOrCreateBuilder(UtilTags.VALUE2).add(Items.GOLD_NUGGET, Items.SLIME_BALL, Items.NETHER_WART);    // Slime Ball, Nether Wart
+    getOrCreateBuilder(UtilTags.VALUE3).add(Items.GUNPOWDER, Items.REDSTONE, Items.GLOWSTONE, Items.LAPIS_LAZULI, Items.EXPERIENCE_BOTTLE, Items.PRISMARINE_CRYSTALS);    // Gunpowder, Redstone, Glowstone, Lapis Lazuli, Experience Bottle
     getOrCreateBuilder(UtilTags.VALUE4).add(Items.BLAZE_POWDER, Items.EMERALD);    // Gold Nugget, Blaze Powder, Emerald
     getOrCreateBuilder(UtilTags.VALUE5).add(Items.PRISMARINE_SHARD);    // Iron Ingot, Prismarine?, Honey Bottle
     getOrCreateBuilder(UtilTags.VALUE6).add(Items.HONEY_BOTTLE);    // Dragon Breath
