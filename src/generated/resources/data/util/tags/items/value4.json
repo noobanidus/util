@@ -1,8 +1,6 @@
 {
   "replace": false,
   "values": [
-    "minecraft:gold_nugget",
-    "minecraft:blaze_powder",
     "minecraft:emerald"
   ]
 }

@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "minecraft:blaze_rod",
     "minecraft:ender_pearl",
     "minecraft:ghast_tear",
     "minecraft:shulker_shell",

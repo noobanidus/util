@@ -2,7 +2,6 @@
   "replace": false,
   "values": [
     "minecraft:iron_ingot",
-    "minecraft:honey_bottle",
     "minecraft:prismarine_shard"
   ]
 }
