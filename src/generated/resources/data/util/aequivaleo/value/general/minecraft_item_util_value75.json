@@ -9,7 +9,7 @@
     }
   },
   "compounds": {
-    "amount": 1.0,
+    "amount": 75.0,
     "type": "util:value75"
   }
 }
