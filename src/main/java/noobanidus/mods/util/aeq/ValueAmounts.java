@@ -119,15 +119,13 @@ public class ValueAmounts implements INBTSerializable<ListNBT> {
       valueMap.put("value15", 0d);
       valueMap.put("value20", 0d);
       valueMap.put("value25", 0d);
-      valueMap.put("value30", 0d);
       valueMap.put("value50", 0d);
       valueMap.put("value75", 0d);
       valueMap.put("value100", 0d);
-      valueMap.put("value150", 0d);
     }
 
     public ValueAmounts build() {
-      return new ValueAmounts(new double[]{valueMap.get("value1"), valueMap.get("value2"), valueMap.get("value3"), valueMap.get("value4"), valueMap.get("value5"), valueMap.get("value6"), valueMap.get("value7"), valueMap.get("value8"), valueMap.get("value9"), valueMap.get("value10"), valueMap.get("value15"), valueMap.get("value20"), valueMap.get("value25"), valueMap.get("value30"), valueMap.get("value50"), valueMap.get("value75"), valueMap.get("value100"), valueMap.get("value150")});
+      return new ValueAmounts(new double[]{valueMap.get("value1"), valueMap.get("value2"), valueMap.get("value3"), valueMap.get("value4"), valueMap.get("value5"), valueMap.get("value6"), valueMap.get("value7"), valueMap.get("value8"), valueMap.get("value9"), valueMap.get("value10"), valueMap.get("value15"), valueMap.get("value20"), valueMap.get("value25"), valueMap.get("value50"), valueMap.get("value75"), valueMap.get("value100")});
     }
 
     public void put(String name, double value) {
