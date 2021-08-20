@@ -1,3 +1,4 @@
+/*
 package noobanidus.mods.util.aeq;
 
 import com.ldtteam.aequivaleo.api.IAequivaleoAPI;
@@ -42,14 +43,17 @@ public class ConversionCache {
       mappings.put(stack.getItem(), result);
     }
     return result;
+*/
 /*    return mappings.computeIfAbsent(stack.getItem(), item -> {
       IResultsInformationCache aeqCache = IAequivaleoAPI.getInstance().getResultsInformationCache(worldKey);
       Optional<ValueAmounts> am = aeqCache.getCacheFor(ModAeq.VALUE.get(), item);
       return am.orElse(ValueAmounts.EMPTY);
-    });*/
+    });*//*
+
   }
 
   public void clear() {
     this.mappings.clear();
   }
 }
+*/

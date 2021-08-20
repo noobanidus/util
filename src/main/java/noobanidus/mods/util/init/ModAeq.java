@@ -1,3 +1,4 @@
+/*
 package noobanidus.mods.util.init;
 
 import com.ldtteam.aequivaleo.api.compound.type.ICompoundType;
@@ -58,3 +59,4 @@ public class ModAeq {
 
   }
 }
+*/

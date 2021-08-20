@@ -36,10 +36,11 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.ForgeRegistries;
 import noobanidus.libs.noobutil.registrate.CustomRegistrate;
-import noobanidus.mods.util.aeq.AeqPlugin;
-import noobanidus.mods.util.commands.*;
+import noobanidus.mods.util.commands.CommandConfig;
+import noobanidus.mods.util.commands.CommandEntities;
+import noobanidus.mods.util.commands.CommandItemKill;
+import noobanidus.mods.util.commands.CommandItems;
 import noobanidus.mods.util.config.ConfigManager;
-import noobanidus.mods.util.init.ModAeq;
 import noobanidus.mods.util.setup.ClientInit;
 import noobanidus.mods.util.setup.CommonSetup;
 import org.apache.logging.log4j.LogManager;
@@ -74,7 +75,7 @@ public class Util {
     MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
     MinecraftForge.EVENT_BUS.addListener(EventPriority.LOWEST, this::biomeLoad);
     MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGHEST, this::onRightClickBlock);
-    ModAeq.load();
+    /*    ModAeq.load();*/
   }
 
   private static final Set<ResourceLocation> ENTITIES_TO_REMOVE = Sets.newHashSet(new ResourceLocation("upgrade_aquatic", "pike"));
@@ -152,7 +153,7 @@ public class Util {
     CommandEntities.register(event.getDispatcher());
     CommandConfig.register(event.getDispatcher());
     CommandItemKill.register(event.getDispatcher());
-    CommandToolLevel.register(event.getDispatcher());
+    /*    CommandToolLevel.register(event.getDispatcher());*/
   }
 
   public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {

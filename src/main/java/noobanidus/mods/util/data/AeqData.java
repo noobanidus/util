@@ -1,3 +1,4 @@
+/*
 package noobanidus.mods.util.data;
 
 import com.ldtteam.aequivaleo.api.compound.CompoundInstance;
@@ -21,9 +22,12 @@ public class AeqData extends ForcedInformationProvider {
 
   @Override
   public void calculateDataToSave() {
+*/
 /*    for (Map.Entry<ITag.INamedTag<Item>, RegistryEntry<ICompoundType>> val : ModAeq.MAP.entrySet()) {
       int amount = Integer.parseInt(val.getKey().getName().getPath().split("value")[1]);
       save(specFor(val.getKey()).withCompounds(new CompoundInstance(val.getValue().get(), amount)));
-    }*/
+    }*//*
+
   }
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package noobanidus.mods.util.data;
 
 import net.minecraft.data.DataGenerator;
@@ -14,7 +15,10 @@ public class DataSubscriber {
     if (event.includeServer()) {
       AeqTagsProvider.AeqBlockTagsProvider blockProvider = new AeqTagsProvider.AeqBlockTagsProvider(generator, event.getExistingFileHelper());
       generator.addProvider(new AeqTagsProvider(generator, blockProvider, event.getExistingFileHelper()));
- /*     generator.addProvider(new AeqData(generator));*/
+ */
+/*     generator.addProvider(new AeqData(generator));*//*
+
     }
   }
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package noobanidus.mods.util.aeq;
 
 import com.ldtteam.aequivaleo.api.compound.type.ICompoundType;
@@ -36,3 +37,4 @@ public class ValueType extends ForgeRegistryEntry<ICompoundType> implements ICom
     return value;
   }
 }
+*/

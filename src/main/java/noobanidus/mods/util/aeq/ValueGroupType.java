@@ -1,3 +1,4 @@
+/*
 package noobanidus.mods.util.aeq;
 
 import com.ldtteam.aequivaleo.api.compound.CompoundInstance;
@@ -75,3 +76,4 @@ public class ValueGroupType extends ForgeRegistryEntry<ICompoundTypeGroup> imple
         return Optional.of(builder.build());
     }
 }
+*/

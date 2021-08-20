@@ -1,3 +1,4 @@
+/*
 package noobanidus.mods.util.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
@@ -37,3 +38,4 @@ public class CommandToolLevel {
     return builder;
   }
 }
+*/

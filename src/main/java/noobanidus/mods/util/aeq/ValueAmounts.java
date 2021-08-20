@@ -1,3 +1,4 @@
+/*
 package noobanidus.mods.util.aeq;
 
 import net.minecraft.nbt.DoubleNBT;
@@ -10,6 +11,7 @@ import java.util.Map;
 public class ValueAmounts implements INBTSerializable<ListNBT> {
   public static final ValueAmounts EMPTY = new ValueAmounts();
 
+*/
 /*  public static final Codec<ValueAmounts> CODEC = RecordCodecBuilder.create(instance ->
       instance.group(
           Codec.DOUBLE.fieldOf("value1").forGetter(i -> i.get(0)),
@@ -28,7 +30,8 @@ public class ValueAmounts implements INBTSerializable<ListNBT> {
           Codec.DOUBLE.fieldOf("value50").forGetter(i -> i.get(13)),
           Codec.DOUBLE.fieldOf("value75").forGetter(i -> i.get(14)),
           Codec.DOUBLE.fieldOf("value100").forGetter(i -> i.get(15))
-      ).apply(instance, ValueAmounts::new));*/
+      ).apply(instance, ValueAmounts::new));*//*
+
 
   public double[] elements = new double[16];
 
@@ -137,3 +140,4 @@ public class ValueAmounts implements INBTSerializable<ListNBT> {
     }
   }
 }
+*/

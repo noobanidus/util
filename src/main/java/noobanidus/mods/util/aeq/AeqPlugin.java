@@ -1,3 +1,4 @@
+/*
 package noobanidus.mods.util.aeq;
 
 import com.ldtteam.aequivaleo.api.compound.type.ICompoundType;
@@ -53,3 +54,4 @@ public class AeqPlugin implements IAequivaleoPlugin {
     CLIENT.clear();
   }
 }
+*/

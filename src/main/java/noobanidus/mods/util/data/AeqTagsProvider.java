@@ -1,3 +1,4 @@
+/*
 package noobanidus.mods.util.data;
 
 import net.minecraft.data.BlockTagsProvider;
@@ -41,3 +42,4 @@ public class AeqTagsProvider extends ItemTagsProvider {
     }
   }
 }
+*/
