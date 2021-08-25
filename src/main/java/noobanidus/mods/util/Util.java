@@ -65,6 +65,7 @@ public class Util {
     ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigManager.COMMON_CONFIG);
     ConfigManager.loadConfig(ConfigManager.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MODID + "-common.toml"));
     modBus.addListener(CommonSetup::init);
+    modBus.addListener(CommonSetup::onLoad);
     modBus.addListener(ConfigManager::onLoading);
     modBus.addListener(ConfigManager::onReload);
 

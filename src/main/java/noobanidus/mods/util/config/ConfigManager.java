@@ -27,6 +27,10 @@ public class ConfigManager {
   public static ForgeConfigSpec.DoubleValue CHERRY_TREE_EXTRA;
   public static ForgeConfigSpec.IntValue CHERRY_TREE_EXTRA_COUNT;
 
+  public static ForgeConfigSpec.IntValue STABLE_SEPARATION;
+  public static ForgeConfigSpec.IntValue STABLE_SPACING;
+  public static ForgeConfigSpec.BooleanValue MODIFY_STABLES;
+
   public static ForgeConfigSpec.BooleanValue SPAWNER_BLOCK;
 
   static {
@@ -47,66 +51,51 @@ public class ConfigManager {
     COMMON_BUILDER.push("Spawners");
     SPAWNER_BLOCK = COMMON_BUILDER.comment("whether or not spawners should be blocked from having their spawn entity replaced by right-clicking with a spawn egg").define("block_spawner_eggs", true);
     COMMON_BUILDER.pop();
+    COMMON_BUILDER.push("Stables");
+    MODIFY_STABLES = COMMON_BUILDER.comment("whether or not the structure separation for stables should be modified").define("modify_stables", true);
+    STABLE_SPACING = COMMON_BUILDER.comment("the spacing between stables structures").defineInRange("stable_spacing", 60, 1, Integer.MAX_VALUE);
+    STABLE_SEPARATION = COMMON_BUILDER.comment("the separation between stable structures").defineInRange("stable_separation", 40, 1, Integer.MAX_VALUE);
     COMMON_CONFIG = COMMON_BUILDER.build();
   }
 
-  private static int unicorn = -999;
-  private static int chance = -999;
-
   public static boolean shouldUnicorn() {
-    if (unicorn == -999) {
-      unicorn = UNICORN.get() ? 1 : 0;
-    }
-    return unicorn == 1;
+    return UNICORN.get();
   }
 
   public static int unicornChance() {
-    if (chance == -999) {
-      chance = UNICORN_CHANCE.get();
-    }
-    return chance;
+    return UNICORN_CHANCE.get();
   }
 
-  private static int cherry_trees = -999;
-  private static int cherry_tree_count = -999;
-  private static float cherry_tree_extra = -999;
-  private static int cherry_tree_extra_count = -999;
-
   public static boolean shouldCherry() {
-    if (cherry_trees == -999) {
-      cherry_trees = CHERRY_TREES.get() ? 1 : 0;
-    }
-    return cherry_trees == 1;
+    return CHERRY_TREES.get();
   }
 
   public static int cherryCount() {
-    if (cherry_tree_count == -999) {
-      cherry_tree_count = CHERRY_TREE_COUNT.get();
-    }
-    return cherry_tree_count;
+    return CHERRY_TREE_COUNT.get();
   }
 
   public static float cherryExtra() {
-    if (cherry_tree_extra == -999) {
-      cherry_tree_extra = (float) (double) CHERRY_TREE_EXTRA.get();
-    }
-    return cherry_tree_extra;
+    return CHERRY_TREE_EXTRA.get().floatValue();
   }
 
   public static int cherryExtraCount() {
-    if (cherry_tree_extra_count == -999) {
-      cherry_tree_extra_count = CHERRY_TREE_EXTRA_COUNT.get();
-    }
-    return cherry_tree_extra_count;
+    return CHERRY_TREE_EXTRA_COUNT.get();
   }
 
-  private static int spawnerBlock = -999;
+  public static boolean blockSpawners() {
+    return SPAWNER_BLOCK.get();
+  }
 
-  public static boolean blockSpawners () {
-    if (spawnerBlock == -999) {
-      spawnerBlock = SPAWNER_BLOCK.get() ? 1 : 0;
-    }
-    return spawnerBlock == 1;
+  public static int getStableSpacing () {
+    return STABLE_SPACING.get();
+  }
+
+  public static int getStableSeparation () {
+    return STABLE_SPACING.get();
+  }
+
+  public static boolean shouldModifyStables () {
+    return MODIFY_STABLES.get();
   }
 
   public static void loadConfig(ForgeConfigSpec spec, Path path) {
@@ -145,13 +134,6 @@ public class ConfigManager {
     if (config.getType() == ModConfig.Type.COMMON) {
       COMMON_CONFIG.setConfig(config.getConfigData());
       blacklist = null;
-      unicorn = -999;
-      chance = -999;
-      cherry_trees = -999;
-      cherry_tree_count = -999;
-      cherry_tree_extra = -999;
-      cherry_tree_extra_count = -999;
-      spawnerBlock = -999;
     }
   }
 }
